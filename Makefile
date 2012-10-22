@@ -2,10 +2,13 @@ SHELL=bash
 
 JAVAC_FLAGS=
 JPP_FLAGS=
+JAR_FLAGS=
 DEBUG=0
 
 JAVAC=javac7
 DEFUALT_JAVAC=javac
+JAR=jar7
+DEFUALT_JAR=jar
 CAT=cat
 RM=rm
 MKDIR=mkdir
@@ -18,7 +21,7 @@ MV=mv
 SED=sed
 
 
-all: jpp debug javac
+all: jpp debug javac jar
 
 jpp:
 	if [ ! -d "bin" ]; then  $(MKDIR) "bin"  ; fi
@@ -60,9 +63,26 @@ javac: jpp debug
 	     fi															   \
 	))
 
+jar: javac
+	(function _jar7														   \
+	 {   $(HASH) $(JAR) 2>/dev/null >/dev/null;										   \
+	     if [ "$$?" = 0 ]; then												   \
+	         $(JAR) "$$@";													   \
+	     else														   \
+	         $(DEFUALT_JAR) "$$@";												   \
+	     fi;														   \
+	 };															   \
+	 cd bin															   \
+	 cp -r ../META-INF .													   \
+	 _jar7 $(JAR_FLAGS) -cfm "maze-game.jar" "META-INF/MANIFEST.MF"								   \
+	       $$($(FIND) "./bin" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$');						   \
+	 mv maze-game.jar ..													   \
+	)
+
 
 clean:
 	if [ -d "bin" ]; then  $(RM) -r "bin"  ; fi
+	if [ -f "maze-game.jar" ]; then  $(RM) "maze-game"  ; fi
 
 
 .PHONY: all clean
