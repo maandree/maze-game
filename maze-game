@@ -1,8 +1,13 @@
+#!/usr/bin/env bash
 stty -icanon -echo
-(hash java7 2>/dev/null
+echo -en '\e[?25l'
+(hash java7 2>/dev/null)
 if [ $? = 0 ]; then
     java7 -jar "$0".jar "$@"
 else
     java -jar "$0".jar "$@"
 fi
+rc=$?
+echo -en '\e[?25h'
 stty icanon echo
+exit $rc
