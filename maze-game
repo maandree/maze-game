@@ -1,0 +1,8 @@
+stty -icanon -echo
+(hash java7 2>/dev/null
+if [ $? = 0 ]; then
+    java7 -jar "$0".jar "$@"
+else
+    java -jar "$0".jar "$@"
+fi
+stty icanon echo
