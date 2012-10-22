@@ -1,0 +1,1 @@
+main-class: se.kth.maandree.mazegame.Program
