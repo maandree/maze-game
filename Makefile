@@ -1,5 +1,6 @@
-jarSHELL=bash
+SHELL=bash
 
+PROGRAM=maze-game
 JAVAC_FLAGS=
 JPP_FLAGS=
 JAR_FLAGS=
@@ -87,7 +88,7 @@ jar: javac
 	         $(DEFUALT_JAR) "$$@";						     \
 	     fi;								     \
 	 };									     \
-	 _jar7 cfm "maze-game.jar" "./META-INF/MANIFEST.MF" $(JAR_FLAGS) -C "./bin"  \
+	 _jar7 cfm "$(PROGRAM).jar" "./META-INF/MANIFEST.MF" $(JAR_FLAGS) -C "./bin"  \
 	       $$($(FIND) "./bin" | $(GREP) -v '/\.class$$' | $(GREP) '\.class$$' |  \
 	          $(SED) -e s/'^.\/bin'//);					     \
 	)
@@ -95,18 +96,18 @@ jar: javac
 
 install:
 	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
-	$(INSTALL_M755) "maze-game"     "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
-	$(INSTALL_M755) "maze-game.jar" "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
+	$(INSTALL_M755) "$(PROGRAM)"     "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
+	$(INSTALL_M755) "$(PROGRAM).jar" "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
 
 
 uninstall:
-	$(UNLINK) "$(DESTDIR)$(PREFIX)$(GAMEDIR)/maze-game"
-	$(UNLINK) "$(DESTDIR)$(PREFIX)$(GAMEDIR)/maze-game.jar"
+	$(UNLINK) "$(DESTDIR)$(PREFIX)$(GAMEDIR)/$(PROGRAM)"
+	$(UNLINK) "$(DESTDIR)$(PREFIX)$(GAMEDIR)/$(PROGRAM).jar"
 
 
 clean:
-	if [ -d "bin" ];           then  $(RM_R) "bin"        ; fi
-	if [ -f "maze-game.jar" ]; then  $(RM)   "maze-game"  ; fi
+	if [ -d "bin" ];            then  $(RM_R) "bin"             ; fi
+	if [ -f "$(PROGRAM).jar" ]; then  $(RM)   "$(PROGRAM).jar"  ; fi
 
 
 .PHONY: all clean
