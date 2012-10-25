@@ -142,20 +142,33 @@ public class Program
 	    else
 		continue;
 	    
-	    // FIXME
+	    // FIXME  move (and check validity), ±1 = one cell, ±2 = next turn, ±3 = next wall
 	    
 	    long time = (System.currentTimeMillis() - start) / 1000;
 	    
 	    StringBuilder out = new StringBuilder();
 	    out.append("\033[1;1H\033[2KTime: " + time + " s\n\n");
 	    
-	    // FIXME
+	    // FIXME  draw board to out
+	    if (dx == dy) /* both is zero */
+	    {   // Redraw everything
+	    }
+	    else
+	    {   // Redraw lust the updated parts
+	    }
 	    
 	    System.out.print(out.toString());
 	    System.out.flush();
+	    
+	    if (x == width - 1)
+	    {
+		System.err.println("Finished at " + (System.currentTimeMillis() - start) / 1000 + "."
+				                 + ((System.currentTimeMillis() - start) % 1000));
+		break;
+	    }
 	}
 	
-	System.out.println((System.currentTimeMillis() - start) / 1000 + "." ((System.currentTimeMillis() - start) % 1000));
+	System.err.println("Have a nice day");
     }
     
     
@@ -168,6 +181,7 @@ public class Program
      */
     private static void generate(final boolean[][] matrix, final int height, final int width)
     {
+	// FIXME  implement maze generation
     }
 
 }
