@@ -141,7 +141,7 @@ public class Program
 	    
 	    int ddx = dx < 0 ? -1 : dx > 0 ? 1 : 0;
 	    int ddy = dy < 0 ? -1 : dy > 0 ? 1 : 0;
-	    if ((ddx == 1) || (ddx == -1))
+	    if (dx != 0)
 		for (;;)
 		{   if ((x + ddx >= 0) && (x + ddx < width) && matrix[y][x + ddx])
 			x += ddx;
@@ -153,9 +153,9 @@ public class Program
 			if (matrix[y - 1][x] || matrix[y + 1][x])
 			    break;
 		}
-	    if ((ddy == 1) || (ddy == -1))
+	    if (dy != 0)
 		for (;;)
-		{   if ((y + ddy >= 0) && (y + ddy < height) && matrix[y + ddx][x])
+		{   if ((y + ddy >= 0) && (y + ddy < height) && matrix[y + ddy][x])
 			y += ddy;
 		    else
 			break;
@@ -166,7 +166,7 @@ public class Program
 			    break;
 		}
 	    
-	    if (matrix[y][x] == false) /* incase the move if buggy */
+	    if (matrix[y][x] == false) /* in case the move if buggy */
 	    {	y = oldY;
 		x = oldX;
 	    }
@@ -185,7 +185,7 @@ public class Program
 			if ((y == _y) && (x == _x))
 			    out.append(PLAYER);
 			else
-			    out.append(matrix[y][x] ? FLOOR : WALL);
+			    out.append(matrix[_y][_x] ? FLOOR : WALL);
 		    }
 		    out.append("\n");
 		}
@@ -220,8 +220,15 @@ public class Program
      */
     private static void generate(final boolean[][] matrix, final int height, final int width)
     {
-	// FIXME  implement maze generation
+	for (int y = 0; y < height; y++)
+	    matrix[y][0] = matrix[y][width - 1] = true;
 	
+	for (int x = 0; x < width; x++)
+	    matrix[0][x] = matrix[height - 1][x] = true;
+	
+	final int start = ((int)(Math.random() * (height - 2)) % (height - 2)) + 1;
+	final int end   = ((int)(Math.random() * (height - 2)) % (height - 2)) + 1;
+	matrix[start][0] = matrix[end][width - 1] = false;
 	
 	for (int y = 0; y < height; y++)
 	    for (int x = 0; x < width; x++)
