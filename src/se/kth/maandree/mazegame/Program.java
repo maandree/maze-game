@@ -94,17 +94,12 @@ public class Program
 	    }
 	
 	
-	// 27 79 65 ↑  27 27 79 65 M-↑  27 91 49 59 5{0,1,2,3,4,5,6} 65 *-↑
-	// 27 79 66 ↓  27 27 79 66 M-↓  27 91 49 59 5{0,1,2,3,4,5,6} 66 *-↓
-	// 27 79 67 →  27 27 79 67 M-←  27 91 49 59 5{0,1,2,3,4,5,6} 67 *-→
-	// 27 79 68 ←  27 27 79 68 M-→  27 91 49 59 5{0,1,2,3,4,5,6} 68 *-←
+	final long REG_MASK = 0xFFFFFFL, META_MASK = 0xFFFFFFFFL, ANY_MASK = 0xFFFFFFFFF0FFL;
 	
-	final long REG_MASK = 0xFFFFFFL, META_MASK = 0xFFFFFFFFL, ANY_MASK = 0xFFFFFFF0FFFFL;
-	
-	final long    UP = 0x1B4F41L,    UP_META = 0x1B1B4F41L,    UP_ANY = 0x1B5B313B3041L;
-	final long  DOWN = 0x1B4F42L,  DOWN_META = 0x1B1B4F42L,  DOWN_ANY = 0x1B5B313B3042L;
-	final long RIGHT = 0x1B4F43L, RIGHT_META = 0x1B1B4F43L, RIGHT_ANY = 0x1B5B313B3043L;
-	final long  LEFT = 0x1B4F44L,  LEFT_META = 0x1B1B4F44L,  LEFT_ANY = 0x1B5B313B3044L;
+	final long    UP = 0x1B5B41L,    UP_META = 0x1B1B5B41L,    UP_ANY = 0x1B5B313B3041L;
+	final long  DOWN = 0x1B5B42L,  DOWN_META = 0x1B1B5B42L,  DOWN_ANY = 0x1B5B313B3042L;
+	final long RIGHT = 0x1B5B43L, RIGHT_META = 0x1B1B5B43L, RIGHT_ANY = 0x1B5B313B3043L;
+	final long  LEFT = 0x1B5B44L,  LEFT_META = 0x1B1B5B44L,  LEFT_ANY = 0x1B5B313B3044L;
 	
 	long start = System.currentTimeMillis();
 	
@@ -124,7 +119,7 @@ public class Program
 	    long any = buf & ANY_MASK;
 	    long meta = buf & META_MASK;
 	    long reg = buf & REG_MASK;
-	    boolean ctrl = ((buf >> 16) & 255) == 53;
+	    boolean ctrl = ((buf >> 8) & 255) == 53;
 	    
 	    int dx = 0, dy = 0;
 	    
@@ -138,7 +133,7 @@ public class Program
 	    else if (reg ==    UP)  dy = -1;
 	    else if (reg ==  DOWN)  dy = 1;
 	    else if (reg == RIGHT)  dx = 1;
-	    else if (reg ==  LEFT)  dy = -1;
+	    else if (reg ==  LEFT)  dx = -1;
 	    else
 		continue;
 	    
@@ -196,10 +191,11 @@ public class Program
 		}
 	    }
 	    else
-	    {	out.append("\033[" + (oldY + 1) + ";" + (oldX + 1) + "H" + FLOOR);
-		out.append("\033[" + (   y + 1) + ";" + (   x + 1) + "H" +  WALL);
+	    {	out.append("\033[" + (oldY + 3) + ";" + ((oldX) * 2 + 1) + "H" + FLOOR);
+		out.append("\033[" + (   y + 3) + ";" + ((   x) * 2 + 1) + "H" + PLAYER);
 	    }
 	    
+	    out.append("\033[" + (height + 4) + ";1H");
 	    System.out.print(out.toString());
 	    System.out.flush();
 	    
