@@ -146,8 +146,8 @@ public class Program
 	    
 	    int ddx = dx < 0 ? -1 : dx > 0 ? 1 : 0;
 	    int ddy = dy < 0 ? -1 : dy > 0 ? 1 : 0;
-	    for (;;)
-		if ((ddx == 1) || (ddx == -1))
+	    if ((ddx == 1) || (ddx == -1))
+		for (;;)
 		{   if ((x + ddx >= 0) && (x + ddx < width) && matrix[y][x + ddx])
 			x += ddx;
 		    else
@@ -158,8 +158,8 @@ public class Program
 			if (matrix[y - 1][x] || matrix[y + 1][x])
 			    break;
 		}
-	    for (;;)
-	        if ((ddy == 1) || (ddy == -1))
+	    if ((ddy == 1) || (ddy == -1))
+		for (;;)
 		{   if ((y + ddy >= 0) && (y + ddy < height) && matrix[y + ddx][x])
 			y += ddy;
 		    else
