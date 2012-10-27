@@ -188,7 +188,7 @@ public class Program
 		{   for (int _x = 0; _x < width; _x++)
 		    {
 			if ((y == _y) && (x == _x))
-			    out.append(PALYER);
+			    out.append(PLAYER);
 			else
 			    out.append(matrix[y][x] ? FLOOR : WALL);
 		    }
