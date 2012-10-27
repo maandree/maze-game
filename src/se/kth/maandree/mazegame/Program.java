@@ -142,7 +142,34 @@ public class Program
 	    else
 		continue;
 	    
-	    // FIXME  move (and check validity), ±1 = one cell, ±2 = next turn, ±3 = next wall
+	    int oldX = x, oldY = y;
+	    
+	    int ddx = dx < 0 ? -1 : dx > 0 ? 1 : 0;
+	    int ddy = dy < 0 ? -1 : dy > 0 ? 1 : 0;
+	    for (;;)
+		if ((ddx == 1) || (ddx == -1))
+		{   if ((x + ddx >= 0) && (x + ddx < width) && matrix[y][x + ddx])
+			x += ddx;
+		    else
+			break;
+		    if (dx == ddx)
+			break;
+		    if (dx == ddx << 1)
+			if (matrix[y - 1][x] || matrix[y + 1][x])
+			    break;
+		}
+	    for (;;)
+	        if ((ddy == 1) || (ddy == -1))
+		{   if ((y + dyd >= 0) && (y + ddy < height) && matrix[y + ddx][x])
+			y += ddy;
+		    else
+			break;
+		    if (dy == ddy)
+			break;
+		    if (dy == ddy << 1)
+			if (((x > 0) && matrix[y][x - 1]) || ((x < width - 1) && matrix[y][x + 1]))
+			    break;
+		}
 	    
 	    long time = (System.currentTimeMillis() - start) / 1000;
 	    
