@@ -220,19 +220,62 @@ public class Program
      */
     private static void generate(final boolean[][] matrix, final int height, final int width)
     {
+	final boolean[] falseRow = new boolean[width];
+	for (int x = 0; x < width; x++)
+	    falseRow[x] = false;
 	for (int y = 0; y < height; y++)
-	    matrix[y][0] = matrix[y][width - 1] = true;
+	    System.arraycopy(falseRow, 0, matrix[y], 0, width);
+	
+	final boolean[][] visited = new boolean[height][width];
+	
+	for (int y = 0; y < height; y++)
+	    visited[y][0] = visited[y][width - 1] = true;
 	
 	for (int x = 0; x < width; x++)
-	    matrix[0][x] = matrix[height - 1][x] = true;
+	    visited[0][x] = visited[height - 1][x] = true;
 	
 	final int start = ((int)(Math.random() * (height - 2)) % (height - 2)) + 1;
 	final int end   = ((int)(Math.random() * (height - 2)) % (height - 2)) + 1;
-	matrix[start][0] = matrix[end][width - 1] = false;
+	matrix [start][0] = matrix [end][width - 1] = true;
+	visited[start][0] = visited[end][width - 1] = false;
 	
-	for (int y = 0; y < height; y++)
-	    for (int x = 0; x < width; x++)
-		matrix[y][x] ^= true;
+	final ArrayDeque<int[]> deque = new ArrayDeque<int[]>();
+        deque.offerLast(new int[] { start, 0 });
+	
+	for (int pos[], y, x; (pos = deque.pollLast()) != null;)
+	{
+	    if ((((y = pos[0]) | (x = pos[1])) < 0) || (x >= width) || (y >= height) || visited[y][x])
+	    	continue;
+	    
+	    visited[y][x] = true;
+	    if ((x != 0) && (x != width - 1))
+	    {
+		int c = 0;
+		c += matrix[y - 1][x] ? 1 : 0;
+		c += matrix[y + 1][x] ? 1 : 0;
+		c += matrix[y][x - 1] ? 1 : 0;
+		c += matrix[y][x + 1] ? 1 : 0;
+		if ((y == end) && (x == width - 2))
+		    c--;
+		matrix[y][x] = c == 1;
+		if (c != 1)
+		    continue;
+	    }
+	    
+	    final int[][] nexts = new int[][] { new int[] {y - 1, x}, new int[] {y + 1, x},
+						new int[] {y, x - 1}, new int[] {y, x + 1} };
+	    
+	    for (int i = 4, j; i-- != 1;)
+	    {   int[] temp = nexts[i];
+		nexts[i] = nexts[j = (int)(Math.random() * i) % i];
+		nexts[j] = temp;
+	    }
+	    
+	    for (int i = 0; i < 4; i++)
+		deque.offerLast(nexts[i]);
+	}
+	
+	matrix [end][width - 2] = true;
     }
 
 }
