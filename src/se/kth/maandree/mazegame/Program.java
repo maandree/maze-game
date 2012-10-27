@@ -131,10 +131,10 @@ public class Program
 	    if (d == 'L' - '@')
 	    {  // reprint
 	    }
-	    else if ((any ==    UP_ANY) || (meta ==    UP_META))  dy = ctrl ? -3 : -2;
-	    else if ((any ==  DOWN_ANY) || (meta ==  DOWN_META))  dy = ctrl ? 3 : 2;
-	    else if ((any == RIGHT_ANY) || (meta == RIGHT_META))  dx = ctrl ? 3 : 2;
-	    else if ((any ==  LEFT_ANY) || (meta ==  LEFT_META))  dx = ctrl ? -3 : 2;
+	    else if ((any ==    UP_ANY) || (meta ==    UP_META))  dy = ctrl ? -2 : -3;
+	    else if ((any ==  DOWN_ANY) || (meta ==  DOWN_META))  dy = ctrl ? 2 : 3;
+	    else if ((any == RIGHT_ANY) || (meta == RIGHT_META))  dx = ctrl ? 2 : 3;
+	    else if ((any ==  LEFT_ANY) || (meta ==  LEFT_META))  dx = ctrl ? -2 : -3;
 	    else if (reg ==    UP)  dy = -1;
 	    else if (reg ==  DOWN)  dy = 1;
 	    else if (reg == RIGHT)  dx = 1;
@@ -160,7 +160,7 @@ public class Program
 		}
 	    for (;;)
 	        if ((ddy == 1) || (ddy == -1))
-		{   if ((y + dyd >= 0) && (y + ddy < height) && matrix[y + ddx][x])
+		{   if ((y + ddy >= 0) && (y + ddy < height) && matrix[y + ddx][x])
 			y += ddy;
 		    else
 			break;
@@ -171,17 +171,33 @@ public class Program
 			    break;
 		}
 	    
+	    if (matrix[y][x] == false) /* incase the move if buggy */
+	    {	y = oldY;
+		x = oldX;
+	    }
+	    
 	    long time = (System.currentTimeMillis() - start) / 1000;
 	    
 	    StringBuilder out = new StringBuilder();
-	    out.append("\033[1;1H\033[2KTime: " + time + " s\n\n");
+	    out.append("\033[1;1H\033[1KTime: " + time + " s\n\n");
 	    
-	    // FIXME  draw board to out
 	    if (dx == dy) /* both is zero */
-	    {   // Redraw everything
+	    {
+		out.append("\033[2K");
+		for (int _y = 0; _y < height; _y++)
+		{   for (int _x = 0; _x < width; _x++)
+		    {
+			if ((y == _y) && (x == _x))
+			    out.append(PALYER);
+			else
+			    out.append(matrix[y][x] ? FLOOR : WALL);
+		    }
+		    out.append("\n");
+		}
 	    }
 	    else
-	    {   // Redraw lust the updated parts
+	    {	out.append("\033[" + (oldY + 1) + ";" + (oldX + 1) + "H" + FLOOR);
+		out.append("\033[" + (   y + 1) + ";" + (   x + 1) + "H" +  WALL);
 	    }
 	    
 	    System.out.print(out.toString());
