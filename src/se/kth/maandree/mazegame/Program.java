@@ -225,6 +225,11 @@ public class Program
     private static void generate(final boolean[][] matrix, final int height, final int width)
     {
 	// FIXME  implement maze generation
+	
+	
+	for (int y = 0; y < height; y++)
+	    for (int x = 0; x < width; x++)
+		matrix[y][x] ^= true;
     }
 
 }
