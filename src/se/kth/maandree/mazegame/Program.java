@@ -166,7 +166,7 @@ public class Program
 			    break;
 		}
 	    
-	    if (matrix[y][x] == false) /* in case the move if buggy */
+	    if (matrix[y][x] == false) /* in case the move is buggy */
 	    {	y = oldY;
 		x = oldX;
 	    }
@@ -265,7 +265,7 @@ public class Program
 	    final int[][] nexts = new int[][] { new int[] {y - 1, x}, new int[] {y + 1, x},
 						new int[] {y, x - 1}, new int[] {y, x + 1} };
 	    
-	    for (int i = 4, j; i-- != 1;)
+	    for (int i = 4, j; i-- != 1;) // TODO make baised: favour the same direction
 	    {   int[] temp = nexts[i];
 		nexts[i] = nexts[j = (int)(Math.random() * i) % i];
 		nexts[j] = temp;
@@ -275,7 +275,7 @@ public class Program
 		deque.offerLast(nexts[i]);
 	}
 	
-	matrix [end][width - 2] = true;
+	matrix[end][width - 2] = true; // TODO build into the generation
     }
 
 }
