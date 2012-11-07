@@ -32,6 +32,7 @@ public class Program
     {
 	int width = 40;
 	int height = 40;
+	double bias = 0.5;
         String save = null;
 	String load = null;
 	String linger = null;
@@ -41,8 +42,9 @@ public class Program
 		linger = arg;
 	    else if (linger.equals("--width"))   width  = Integer.parseInt(arg);
 	    else if (linger.equals("--height"))  height = Integer.parseInt(arg);
-	    else if (linger.equals("--save"))    save = arg;
-	    else if (linger.equals("--load"))    load = arg;
+	    else if (linger.equals("--bias"))    bias   = Double.parseDouble(arg);
+	    else if (linger.equals("--save"))    save   = arg;
+	    else if (linger.equals("--load"))    load   = arg;
 	
 	boolean[][] matrix = new boolean[height][width];
 	
@@ -62,7 +64,7 @@ public class Program
 		}
 	    }
 	else
-	    generate(matrix, height, width);
+	    generate(matrix, height, width, bias);
 	
 	final String WALL   = "\033[40m  \033[49m";
 	final String FLOOR  = "\033[47m  \033[49m";
@@ -217,8 +219,9 @@ public class Program
      * @param  matrix  The matrix to fill
      * @param  height  The height of the matrix
      * @param  width   The width of the matrix
+     * @parma  bias    Bias constant
      */
-    private static void generate(final boolean[][] matrix, final int height, final int width)
+    private static void generate(final boolean[][] matrix, final int height, final int width, final double bias)
     {
 	final boolean[] falseRow = new boolean[width];
 	for (int x = 0; x < width; x++)
@@ -247,14 +250,16 @@ public class Program
 	    if ((((y = pos[0]) | (x = pos[1])) < 0) || (x >= width) || (y >= height) || visited[y][x])
 	    	continue;
 	    
+	    int k = -1;
+	    
 	    visited[y][x] = true;
 	    if ((x != 0) && (x != width - 1))
 	    {
 		int c = 0;
-		c += matrix[y - 1][x] ? 1 : 0;
-		c += matrix[y + 1][x] ? 1 : 0;
-		c += matrix[y][x - 1] ? 1 : 0;
-		c += matrix[y][x + 1] ? 1 : 0;
+		if (matrix[y - 1][x])  { c++; k = 0; }
+		if (matrix[y + 1][x])  { c++; k = 1; }
+		if (matrix[y][x - 1])  { c++; k = 3; }
+		if (matrix[y][x + 1])  { c++; k = 2; }
 		if ((y == end) && (x == width - 2))
 		    c--;
 		matrix[y][x] = c == 1;
@@ -265,14 +270,25 @@ public class Program
 	    final int[][] nexts = new int[][] { new int[] {y - 1, x}, new int[] {y + 1, x},
 						new int[] {y, x - 1}, new int[] {y, x + 1} };
 	    
-	    for (int i = 4, j; i-- != 1;) // TODO make baised: favour the same direction
+	    final int[][] originals = new int[][] { nexts[0], nexts[1], nexts[2], nexts[3] };
+	    
+	    for (int i = 4, j; i-- != 1;)
 	    {   int[] temp = nexts[i];
 		nexts[i] = nexts[j = (int)(Math.random() * i) % i];
 		nexts[j] = temp;
 	    }
 	    
+	    if ((k < 0) || (Math.random() > bias))
+		k = 0;
+	    else
+		for (int i = 0; i < 4; i++)
+		    if (nexts[i] == originals[k])
+		    {	k = i;
+			break;
+		    }
+	    
 	    for (int i = 0; i < 4; i++)
-		deque.offerLast(nexts[i]);
+		deque.offerLast(nexts[(i + k) & 3]);
 	}
 	
 	matrix[end][width - 2] = true; // TODO build into the generation
