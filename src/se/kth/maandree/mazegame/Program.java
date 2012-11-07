@@ -292,6 +292,8 @@ public class Program
 	}
 	
 	matrix[end][width - 2] = true; // TODO build into the generation
+	
+	// TODO make break wall to make more dead en paths
     }
 
 }
