@@ -256,8 +256,8 @@ public class Program
 	    if ((x != 0) && (x != width - 1))
 	    {
 		int c = 0;
-		if (matrix[y - 1][x])  { c++; k = 0; }
-		if (matrix[y + 1][x])  { c++; k = 1; }
+		if (matrix[y - 1][x])  { c++; k = 1; }
+		if (matrix[y + 1][x])  { c++; k = 0; }
 		if (matrix[y][x - 1])  { c++; k = 3; }
 		if (matrix[y][x + 1])  { c++; k = 2; }
 		if ((y == end) && (x == width - 2))
@@ -288,7 +288,7 @@ public class Program
 		    }
 	    
 	    for (int i = 0; i < 4; i++)
-		deque.offerLast(nexts[(i + k) & 3]);
+		deque.offerLast(nexts[3 - ((i + k) & 3)]);
 	}
 	
 	matrix[end][width - 2] = true; // TODO build into the generation
