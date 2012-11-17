@@ -1,1 +1,19 @@
 Maze solving game
+
+This program does not concern itself to much
+about generating maze, although it offers a
+simple generator, rather it provides a
+comfortable interface for solving them,
+and lets you specify the a file with a maze,
+which can be a output file from another program.
+
+Use the arrow keys to move around, hold down
+control to move to next turn or shift or alt
+to move to next wall.
+
+Maze files must have one openning on the left
+edge and one openning on the right edge, but
+no additional opennings.
+Walls in maze files are repesented by # and
+floor is represented by .
+
