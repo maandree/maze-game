@@ -2,7 +2,6 @@ SHELL=bash
 
 PROGRAM=maze-game
 JAVAC_FLAGS=
-JPP_FLAGS=
 JAR_FLAGS=
 DEBUG=0
 PREFIX=/usr
@@ -13,6 +12,7 @@ DEFUALT_JAVAC=javac
 JAR=jar7
 DEFUALT_JAR=jar
 CAT=cat
+CP=cp
 RM=rm
 RM_R=$(RM) -r
 UNLINK=unlink
@@ -20,7 +20,6 @@ INSTALL=install
 INSTALL_M755=$(INSTALL) -m 755
 MKDIR=mkdir
 MKDIR_P=mkdir -p
-JPP=jpp
 HASH=hash
 JAVAC_COLOUR=colourpipe.javac
 FIND=find
@@ -29,16 +28,27 @@ MV=mv
 SED=sed
 
 
-all: jpp debug javac jar
+all: debug javac jar
 
 
-jpp:
-	if [ ! -d "bin" ]; then  $(MKDIR) "bin"  ; fi
-	$(JPP) -s "./src" -o "./bin" -DDEBUG=$(DEBUG) $(JPP_FLAGS)             \
-	    $$($(FIND) "./src" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$')
+cp2bin:
+	if [ ! -d "./bin" ]; then  \
+	    $(MKDIR) "./bin";	   \
+	fi
+	$(FIND) "./src" |					       \
+	while read file; do					       \
+	    out=$$($(SED) -e s/'\.\/src\/'/'\.\/bin\/'/ <<<$${file});  \
+	    if [ -d "$$file" ]; then				       \
+	        if [ ! -d "$$out" ]; then			       \
+	            $(MKDIR) "$$out";				       \
+	        fi						       \
+	    else						       \
+	        $(CP) "$$file" "$$out";				       \
+	    fi							       \
+	done
 
 
-debug: jpp
+debug: cp2bin
 	(if (( $(DEBUG) < 1 )); then								\
 	     for file in $$($(FIND) "./bin" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$'); do	\
 	         $(MV) "$$file" "$${file}~";							\
@@ -57,7 +67,7 @@ debug: jpp
 	)
 
 
-javac: jpp debug
+javac: debug
 	(function _jc7								    \
 	 {   $(HASH) $(JAVAC) 2>/dev/null >/dev/null;				    \
 	     if [ "$$?" = 0 ]; then						    \
@@ -110,4 +120,4 @@ clean:
 	if [ -f "$(PROGRAM).jar" ]; then  $(RM)   "$(PROGRAM).jar"  ; fi
 
 
-.PHONY: all clean
+.PHONY: all cp2bin clean
