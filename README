@@ -14,6 +14,6 @@ alternative to move to next wall.
 Maze files must have one openning on the left
 edge and one openning on the right edge, but
 no additional opennings.
-Walls in maze files are repesented by # and
-floor is represented by .
+Walls in maze files are repesented by a hash
+(#) and floor is represented by dot (.).
 
