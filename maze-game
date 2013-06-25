@@ -21,12 +21,7 @@
 echo -en '\e[?1049h'
 stty -icanon -echo
 echo -en '\e[?25l'
-(hash java7 2>/dev/null)
-if [ $? = 0 ]; then
-    java7 -jar "$0".jar "$@" 2>/tmp/.maze-game
-else
-    java  -jar "$0".jar "$@" 2>/tmp/.maze-game
-fi
+java  -jar "$0".jar "$@" 2>/tmp/.maze-game
 rc=$?
 echo -en '\e[?25h'
 stty icanon echo

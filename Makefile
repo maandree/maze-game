@@ -10,10 +10,8 @@ DATADIR=/share
 BOOK=$(PROGRAM)
 BOOKDIR=info/
 
-JAVAC=javac7
-DEFUALT_JAVAC=javac
-JAR=jar7
-DEFUALT_JAR=jar
+JAVAC=javac
+JAR=jar
 CAT=cat
 CP=cp
 RM=rm
@@ -24,7 +22,6 @@ INSTALL_M755=$(INSTALL) -m 755
 INSTALL_M644=$(INSTALL) -m 644
 MKDIR=mkdir
 MKDIR_P=mkdir -p
-HASH=hash
 JAVAC_COLOUR=colourpipe.javac
 FIND=find
 GREP=grep
@@ -105,15 +102,7 @@ debug: cp2bin
 
 
 javac: debug
-	(function _jc7								    \
-	 {   $(HASH) $(JAVAC) 2>/dev/null >/dev/null;				    \
-	     if [ "$$?" = 0 ]; then						    \
-	         $(JAVAC) "$$@";						    \
-	     else								    \
-	         $(DEFUALT_JAVAC) "$$@";					    \
-	     fi;								    \
-	 };									    \
-	 _jc7 $(JAVAC_FLAGS) -cp "./bin" -d "./bin" -s "./bin"			    \
+	($(JAVAC) $(JAVAC_FLAGS) -cp "./bin" -d "./bin" -s "./bin"		    \
 	      $$($(FIND) "./bin" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$') |&  \
 	 (   rc=$$?;								    \
 	     $(HASH) $(JAVAC_COLOUR) 2>/dev/null >/dev/null;			    \
@@ -127,18 +116,9 @@ javac: debug
 
 
 jar: javac
-	(function _jar7								     \
-	 {   $(HASH) $(JAR) 2>/dev/null >/dev/null;				     \
-	     if [ "$$?" = 0 ]; then						     \
-	         $(JAR) "$$@";							     \
-	     else								     \
-	         $(DEFUALT_JAR) "$$@";						     \
-	     fi;								     \
-	 };									     \
-	 _jar7 cfm "$(PROGRAM).jar" "./META-INF/MANIFEST.MF" $(JAR_FLAGS) -C "./bin"  \
-	       $$($(FIND) "./bin" | $(GREP) -v '/\.class$$' | $(GREP) '\.class$$' |  \
-	          $(SED) -e s/'^.\/bin'//);					     \
-	)
+	$(JAR) cfm "$(PROGRAM).jar" "./META-INF/MANIFEST.MF" $(JAR_FLAGS) -C "./bin"  \
+	      $$($(FIND) "./bin" | $(GREP) -v '/\.class$$' | $(GREP) '\.class$$' |    \
+	         $(SED) -e s/'^.\/bin'//)					      \
 
 
 install:
