@@ -8,7 +8,7 @@ PREFIX=/usr
 GAMEDIR=/bin
 DATADIR=/share
 BOOK=$(PROGRAM)
-BOOKDIR=./
+BOOKDIR=info/
 
 JAVAC=javac7
 DEFUALT_JAVAC=javac
@@ -162,7 +162,7 @@ uninstall:
 clean:
 	if [ -d "bin" ];            then  $(RM_R) "bin"             ; fi
 	if [ -f "$(PROGRAM).jar" ]; then  $(RM)   "$(PROGRAM).jar"  ; fi
-	rm -r *.{t2d,aux,{cp,pg,op,vr}{,s},fn,ky,log,toc,tp,bak,info,pdf,ps,dvi,gz} 2>/dev/null || exit 0
+	-rm -r *.{t2d,aux,{cp,pg,op,vr}{,s},fn,ky,log,toc,tp,bak,info,pdf,ps,dvi,gz} 2>/dev/null
 
 
 .PHONY: all cp2bin clean
