@@ -140,9 +140,7 @@ uninstall:
 
 
 clean:
-	if [ -d "bin" ];            then  $(RM_R) "bin"             ; fi
-	if [ -f "$(PROGRAM).jar" ]; then  $(RM)   "$(PROGRAM).jar"  ; fi
-	-rm -r *.{t2d,aux,{cp,pg,op,vr}{,s},fn,ky,log,toc,tp,bak,info,pdf,ps,dvi,gz} 2>/dev/null
+	-rm -r *.{t2d,aux,{cp,pg,op,vr}{,s},fn,ky,log,toc,tp,bak,info,pdf,ps,dvi,gz} bin "$(PROGRAM).jar" 2>/dev/null
 
 
 .PHONY: all cp2bin clean
