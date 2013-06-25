@@ -1,13 +1,18 @@
 SHELL=bash
 
+PREFIX=/usr/games
+BIN=/bin
+DATA=/share
+BINJAR=$(DATA)/misc
+LICENSES=$(DATA)/licenses
+PKGNAME=maze-game
+COMMAND=maze-game
+
 PROGRAM=maze-game
 JAVAC_FLAGS=
 JAR_FLAGS=
 DEBUG=0
-PREFIX=/usr
-GAMEDIR=/bin
-DATADIR=/share
-BOOK=$(PROGRAM)
+BOOK=maze-game
 BOOKDIR=info/
 
 JAVAC=javac
@@ -15,8 +20,8 @@ JAR=jar
 CAT=cat
 CP=cp
 RM=rm
-RM_R=$(RM) -r
-UNLINK=unlink
+RM_R=$(RM) -r --
+UNLINK=$(RM) --
 INSTALL=install
 INSTALL_M755=$(INSTALL) -m 755
 INSTALL_M644=$(INSTALL) -m 644
@@ -29,7 +34,9 @@ MV=mv
 SED=sed
 
 
-all: debug javac jar info
+all: code info
+
+code: debug javac jar launcher
 
 
 info: $(BOOK).info.gz
@@ -83,22 +90,21 @@ cp2bin:
 
 
 debug: cp2bin
-	(if (( $(DEBUG) < 1 )); then								\
-	     for file in $$($(FIND) "./bin" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$'); do	\
-	         $(MV) "$$file" "$${file}~";							\
-	         $(SED) -e s/'\/\*debug\*\/'/'\/\/\*debug\*\/'/g < "$${file}~" > "$$file";	\
-	     done										\
-	 elif (( $(DEBUG) > 1 )); then								\
-	     for file in $$($(FIND) "./bin" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$'); do	\
-	         i=1;										\
-	         while (( $$i < $(DEBUG) )); do							\
-	             $(MV) "$$file" "$${file}~";						\
-	             $(SED) -e s/'\/\/\*debug\*\/'/'\/\*debug\*\/'/g < "$${file}~" > "$$file";	\
-	             i=$$(( $$i + 1 ));								\
-	         done										\
-	     done										\
-	 fi											\
-	)
+	if (( $(DEBUG) < 1 )); then								\
+	    for file in $$($(FIND) "./bin" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$'); do	\
+	        $(MV) "$$file" "$${file}~";							\
+	        $(SED) -e s/'\/\*debug\*\/'/'\/\/\*debug\*\/'/g < "$${file}~" > "$$file";	\
+	    done										\
+	elif (( $(DEBUG) > 1 )); then								\
+	    for file in $$($(FIND) "./bin" | $(GREP) -v '/\.java$$' | $(GREP) '\.java$$'); do	\
+	        i=1;										\
+	        while (( $$i < $(DEBUG) )); do							\
+	            $(MV) "$$file" "$${file}~";							\
+	            $(SED) -e s/'\/\/\*debug\*\/'/'\/\*debug\*\/'/g < "$${file}~" > "$$file";	\
+	            i=$$(( $$i + 1 ));								\
+	        done										\
+	    done										\
+	fi
 
 
 javac: debug
@@ -120,27 +126,39 @@ jar: javac
 	      $$($(FIND) "./bin" | $(GREP) -v '/\.class$$' | $(GREP) '\.class$$' |    \
 	         $(SED) -e s/'^.\/bin'//)					      \
 
+launcher: $(PROGRAM).install
+$(PROGRAM).install: $(PROGRAM)
+	cp "$<" "$@"
+	sed -i 's:"$$0".jar:"$(PREFIX)$(BINJAR)/$(COMMAND).jar":g' "$@"
 
-install:
-	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
-	$(INSTALL_M755) "$(PROGRAM)"     "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
-	$(INSTALL_M755) "$(PROGRAM).jar" "$(DESTDIR)$(PREFIX)$(GAMEDIR)"
-	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(DATADIR)/licenses/$(PROGRAM)"
-	$(INSTALL_M644) "COPYING" "$(DESTDIR)$(PREFIX)$(DATADIR)/licenses/$(PROGRAM)"
-	$(INSTALL_M644) "LICENSE" "$(DESTDIR)$(PREFIX)$(DATADIR)/licenses/$(PROGRAM)"
-	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(DATADIR)/info"
-	$(INSTALL_M644) "$(BOOK).info.gz" "$(DESTDIR)$(PREFIX)$(DATADIR)/info"
+
+install: install-cmd install-license install-info
+
+install-cmd:
+	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(BIN)"
+	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(BINJAR)"
+	$(INSTALL_M755) "$(PROGRAM).install" "$(DESTDIR)$(PREFIX)$(BIN)/$(COMMAND)"
+	$(INSTALL_M755) "$(PROGRAM).jar" "$(DESTDIR)$(PREFIX)$(BINJAR)/$(COMMAND).jar"
+
+install-license:
+	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(LICENSES)/$(PKGNAME)"
+	$(INSTALL_M644) "COPYING" "$(DESTDIR)$(PREFIX)$(LICENSES)/$(PKGNAME)"
+	$(INSTALL_M644) "LICENSE" "$(DESTDIR)$(PREFIX)$(LICENSES)/$(PKGNAME)"
+
+install-info:
+	$(MKDIR_P) "$(DESTDIR)$(PREFIX)$(DATA)/info"
+	$(INSTALL_M644) "$(BOOK).info.gz" "$(DESTDIR)$(PREFIX)$(DATA)/info/$(PKGNAME).info.gz"
 
 
 uninstall:
-	$(UNLINK) "$(DESTDIR)$(PREFIX)$(GAMEDIR)/$(PROGRAM)"
-	$(UNLINK) "$(DESTDIR)$(PREFIX)$(GAMEDIR)/$(PROGRAM).jar"
-	$(RM_R) "$(DESTDIR)$(PREFIX)$(DATA)/licenses/$(PROGRAM)"
-	$(UNLINK) "$(DESTDIR)$(PREFIX)$(DATA)/info/$(BOOK).info.gz"
+	$(UNLINK) "$(DESTDIR)$(PREFIX)$(BIN)/$(COMMAND)"
+	$(UNLINK) "$(DESTDIR)$(PREFIX)$(BINJAR)/$(COMMAND).jar"
+	$(RM_R) "$(DESTDIR)$(PREFIX)$(LICENSES)/$(PKGNAME)"
+	$(UNLINK) "$(DESTDIR)$(PREFIX)$(DATA)/info/$(PKGNAME).info.gz"
 
 
 clean:
-	-rm -r *.{t2d,aux,{cp,pg,op,vr}{,s},fn,ky,log,toc,tp,bak,info,pdf,ps,dvi,gz} bin "$(PROGRAM).jar" 2>/dev/null
+	-rm -r *.{t2d,aux,{cp,pg,op,vr}{,s},fn,ky,log,toc,tp,bak,info,pdf,ps,dvi,gz,install} bin "$(PROGRAM).jar" 2>/dev/null
 
 
 .PHONY: all cp2bin clean

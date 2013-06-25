@@ -15,6 +15,7 @@
 *.pdf
 *.ps
 *.dvi
+*.install
 
 maze-game.aux
 maze-game.cp
