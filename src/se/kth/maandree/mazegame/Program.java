@@ -1,7 +1,7 @@
 /**
  * maze-game – Maze solving game
  * 
- * Copyright © 2012, 2013  Mattias Andrée (maandree@member.fsf.org)
+ * Copyright © 2012, 2013  Mattias Andrée (m@maandree.se)
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * This is the main class of the program
  * 
- * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
+ * @author  Mattias Andrée, <a href="mailto:m@maandree.se">m@maandree.se</a>
  */
 public class Program
 {
